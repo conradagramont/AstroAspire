@@ -1,0 +1,75 @@
+---
+// Tell Astro to prerender this page
+// Since Astro is in Hybrid mode, it thinks all pages should be static
+// Since this page will be a static output, we don't need to set the following
+// const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+
+
+/*
+// ISSUE: This fails during deployment time to Azure using azd up.
+//		- The commented code below fails because the environment variables are not available during deployment time.
+//		- When the docker images is being created, the environment variables are not available since they are injected by the Aspire AppHost
+//      - This code will not work in Astro, but it's here to show how we can make an API call directly from the page
+//		- The code below will work in local development, but not during deployment time to Azure
+// 
+// For now, we'll just create the data statically.
+
+// We'll get the environment variables that was injected by the Aspire AppHost in Basic\AstroAspire.AppHost\Program.cs
+// 		- <snippet from Basic\AstroAspire.AppHost\Program.cs> -> <environment variable>
+// 		- .WithReference(api)								->		services__api__https__0
+// 		- .WithEnvironment("apiBasePath", apiBasePath)		->		apiBasePath
+
+
+    // Let's point to our astro component that will make the API cal the Aspire weather API
+    import getWeatherData from '../components/AspireRestWeather'
+
+    const weatherApiServer = process.env['services__api__https__0'] || "";  // This value won't work, but added to suppress an error/warning that the variable is not defined
+    const apiBase = process.env['apiBasePath'] || "api";
+    const apiEndpoint = weatherApiServer + apiBase;
+    const weatherAPIUrl = `${apiEndpoint}/weatherforecast`;
+
+    console.log(`   weatherAPIUrl: ${weatherAPIUrl}`);
+
+    const thisWeather = await getWeatherData(weatherAPIUrl);
+*/
+
+const thisWeather = [
+    { date: '2021-09-01', temperatureC: 20, temperatureF: 68, summary: 'Hot' },
+    { date: '2021-09-02', temperatureC: 22, temperatureF: 72, summary: 'Warm' },
+    { date: '2021-09-03', temperatureC: 18, temperatureF: 64, summary: 'Cool' },
+    { date: '2021-09-04', temperatureC: 21, temperatureF: 70, summary: 'Warm' },
+    { date: '2021-09-05', temperatureC: 19, temperatureF: 66, summary: 'Cool' }
+];
+---
+
+<Layout title="Static">
+	<main>
+    <h1>Weather (Static)</h1>
+	<p>This page is pre-rendered by Astro into a static html file.</p>
+	<p><s>During the build time, this page will call the Aspire API directly to fetch the data which is then populated into the static file.</s></p>
+	<p>During the build time, this page will use a static set of Json data and Astro will generate a static HTML file as the output.</p>
+	<p>When the page is loaded, the data is already available and no further API calls are made.</p>
+    <table id="weatherTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temperature (°C)</th>
+                <th>Temperature (°F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+			{thisWeather.map(({ date, temperatureC, temperatureF, summary }) => (
+                    <tr>
+                        <td>{date}</td>
+                        <td>{temperatureC}°C</td>
+                        <td>{temperatureF}°F</td>
+                        <td>{summary}</td>
+                    </tr>
+                ))}
+        </tbody>
+    </table>
+  </main>
+</Layout>

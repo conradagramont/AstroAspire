@@ -1,0 +1,6 @@
+@AstroAspire.API_HostAddress = http://localhost:5193
+
+GET {{AstroAspire.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,70 @@
+---
+// Tell Astro to prerender this page
+// Since Astro is in Hybrid mode, it thinks all pages should be static
+// Since this page will be a static output, we don't need to set the following
+// const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+
+const weatherAPIUrl = `/api/get-weather`;
+
+console.log(`   weatherAPIUrl: ${weatherAPIUrl}`);
+---
+
+<Layout title="Static + Rest to Astro API">
+	<main>
+
+    <h1>Weather (Static + Rest to Astro API)</h1>
+	<p>This page is pre-rendered by Astro into a static html file.</p>
+    <p>When the page request comes in from the browser, the following happens:</p>
+    <ul>
+        <li>The pre-rendered static page is returned.</li>
+        <li>JavaScript in the static page that will call the <a href="/api/get-weather" />Astro API</a> directly.</li>
+        <li>Response from the API will then be added to the table already defined on the static page.</li>
+    </ul>
+    <table id="weatherTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temperature (°C)</th>
+                <th>Temperature (°F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+    
+    <astroaspire id="weatherAspireApi" data-uri={weatherAPIUrl} />
+
+    <script is:inline>
+        document.addEventListener('DOMContentLoaded', function() {
+            const astroAspire = document.querySelector("#weatherAspireApi");
+            const weatherAspireApiUri = astroAspire.getAttribute('data-uri');
+
+            console.log(`   weatherAspireApiUri: ${weatherAspireApiUri}`);
+
+            // fetch('https://localhost:7060/api/weatherforecast')
+            fetch(weatherAspireApiUri)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Data fetched:');
+                    console.log(data);
+                    const tableBody = document.querySelector('#weatherTable tbody');
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.date}</td>
+                            <td>${item.temperatureC}</td>
+                            <td>${item.temperatureF}</td>
+                            <td>${item.summary}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
+    </main>
+</Layout>

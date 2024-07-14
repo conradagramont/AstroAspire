@@ -1,0 +1,92 @@
+---
+// Tell Astro to prerender this page
+// Since Astro is in Hybrid mode, it thinks all pages should be static
+// Since this page will be a static output, we don't need to set the following
+// const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+
+---
+
+<Layout title="Static + Rest to AstroAspire API">
+	<main>
+
+    <h1>Weather (Static + Rest to AstroAspire API)</h1>
+	<p>This page is pre-rendered by Astro into a static html file.</p>
+    <p>When the page request comes in from the browser, the following happens:</p>
+    <ul>
+        <li>The pre-rendered static page is returned.</li>
+        <li>JavaScript in the static page that will call the an Astro API first to get the endpoint to the AstroAspire.API</li>
+        <ul>
+            <li>Astro API for this is located: AstroFrontend\src\pages\api\get-astroaspireapi.js</li>
+            <li>Astro API for this: <a href="/api/get-astroaspireapi" target="_blank" class="text-white">/api/get-astroaspireapi</a></li>
+        </ul>
+        <li>JavaScript in the static page that will call the AstroAspire.API directly</li>
+        <li>Response from the API will then be added to the table already defined on the static page.</li>
+    </ul>
+    <p>Note: This page required enabling CORS in the AstroAspire.API project and updates in AppHost as well.</p>
+    <div id="message"></div>
+    <table id="weatherTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temperature (°C)</th>
+                <th>Temperature (°F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+    
+
+    <script is:inline>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageDiv = document.getElementById('message');
+
+            // We need to call the /api/get-astroaspireapi endpoint to get the endpoint for the weather data
+            const targetAspireApiUri = `/api/get-astroaspireapi`;
+
+            fetch(targetAspireApiUri)
+                .then(response => response.json())
+                .then(data => {
+                    return data.weatherAspireApiUri;
+                })
+                .catch(error => {
+                    console.error('Error fetching data for target URI:', error);
+                })
+                .then(wapiEndpoint =>{
+                    fetch(wapiEndpoint)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Data fetched:');
+                        
+                        messageDiv.textContent = 'Weather data successfully loaded.';
+                        messageDiv.style.color = 'green';
+
+                        return data;
+                    })
+                    .then(data => {
+                        const tableBody = document.querySelector('#weatherTable tbody');
+                        data.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.date}</td>
+                                <td>${item.temperatureC}</td>
+                                <td>${item.temperatureF}</td>
+                                <td>${item.summary}</td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data from Aspire API:', error);
+                        messageDiv.textContent = `Error fetching data: ${error.message}`;
+                        messageDiv.style.color = 'red';
+                    });
+                })            
+        });
+    </script>
+    </main>
+</Layout>

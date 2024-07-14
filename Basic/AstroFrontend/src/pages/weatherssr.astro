@@ -1,0 +1,81 @@
+---
+// Tell Astro NOT to prerender this page
+// Since Astro is in Hybrid mode, it thinks all pages should be static
+// Since this page will be do Static Site Rendering (SSR), we need to set the following
+export const prerender = false;
+
+// Basic Layout for the page
+import Layout from '../layouts/Layout.astro';
+
+// Import the OpenTelemetry API
+import OpenTelemetry from '@opentelemetry/api';
+//import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
+
+// Let's point to our astro component that will make the API cal the Aspire weather API
+import getWeatherData from '../components/AspireRestWeather'
+
+// Set the tracer we'll use for this page
+const tracer = OpenTelemetry.trace.getTracer('AstroAspire.Frontend');
+
+// Start a new span for this page
+const span = tracer.startSpan('Astro Pages - weatherssr-astro');
+
+console.log(`   Hi from weatherssr.astro!`);
+
+const logger = OpenTelemetry.diag;
+
+logger.info(`   info I'M LOGGING! Hi from weatherssr.astro!`);
+logger.warn(`   WARNING I'M LOGGING! Hi from weatherssr.astro!`);
+logger.error(`   ERROR I'M LOGGING! Hi from weatherssr.astro!`);
+logger.verbose(`   verbose I'M LOGGING! Hi from weatherssr.astro!`);
+
+const weatherApiServer = process.env['services__api__http__0'] || "";  // This value won't work, but added to suppress an error/warning that the variable is not defined
+const apiBase = process.env['apiBasePath'] || "api";
+const apiEndpoint = weatherApiServer + apiBase;
+const weatherAPIUrl = `${apiEndpoint}/weatherforecast`;
+
+console.log(`   weatherAPIUrl: ${weatherAPIUrl}`);
+
+span.setAttribute('Astro Pages', 'weatherssr-astro');
+span.setAttribute('weatherAPIUrl', weatherAPIUrl);
+
+// Get the weather data, pass in the span so we can add attributes to it
+const thisWeather = await getWeatherData(weatherAPIUrl) || [{ date: "No Data", temperatureC: "No Data", temperatureF: "No Data", summary: "No Data" }];
+
+span.end();
+---
+
+<Layout title="SSR">
+	<main>
+
+    <h1>Weather (SSR)</h1>
+	<p>This page is rendered on-demand.</p>
+    <p>When the page request comes in from the browser, the following happens:</p>
+    <ul>
+        <li>Server Side Rendering within Node/Express captures the request</li>
+        <li>The page makes an API call to the Aspire API to fetch the weather data.</li>
+        <li>The data is then populated within the Astro framework.</li>
+        <li>The page is then sent back to the browser with the data direclty in html format.</li>
+    </ul>
+    <table id="weatherTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temperature (°C)</th>
+                <th>Temperature (°F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+			{thisWeather.map(({ date, temperatureC, temperatureF, summary }) => (
+                    <tr>
+                        <td>{date}</td>
+                        <td>{temperatureC}°C</td>
+                        <td>{temperatureF}°F</td>
+                        <td>{summary}</td>
+                    </tr>
+                ))}
+        </tbody>
+    </table>
+    </main>
+</Layout>
