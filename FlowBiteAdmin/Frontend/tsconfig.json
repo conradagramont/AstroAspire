@@ -1,0 +1,18 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "strict": true,
+      "lib": ["dom", "es2015", "es2016", "es2017", "es2018", "es2019", "es2020", "es2021", "esnext"],
+      "outDir": "./lib/cjs/",
+      "sourceMap": true,
+      "declaration": true,
+      "noImplicitAny": true,
+      "module": "ES2022",
+      "target": "es5",
+      "allowJs": true,
+      "moduleResolution": "node",
+      "forceConsistentCasingInFileNames": true,
+  },
+  "include": ["src/**/*.ts*"],
+  "exclude": ["node_modules", "dist", "lib"]
+}

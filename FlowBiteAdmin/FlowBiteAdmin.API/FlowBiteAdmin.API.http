@@ -1,0 +1,6 @@
+@FlowBiteAdmin.API_HostAddress = http://localhost:5251
+
+GET {{FlowBiteAdmin.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

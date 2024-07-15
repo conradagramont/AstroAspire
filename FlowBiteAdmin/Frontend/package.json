@@ -1,0 +1,91 @@
+{
+  "name": "frontend",
+  "description": "A free and open-source admin dashboard template built with Tailwind CSS, Flowbite and Astro",
+	"keywords": [
+		"tailwind",
+		"tailwind css",
+		"flowbite",
+		"admin dashboard",
+		"dashboard ui",
+		"admin dashboard template",
+		"html",
+		"css",
+		"astro",
+		"astro-theme",
+		"astro-template",
+		"javascript"
+	],
+	"homepage": "https://flowbite.com",
+	"bugs": "https://github.com/themesberg/flowbite-astro-admin-dashboard/issues",
+	"repository": "https://github.com/themesberg/flowbite-astro-admin-dashboard.git",
+	"license": "MIT",
+	"author": "Bergside Inc.",
+	"contributors": [
+		"Zoltán Szőgyényi <https://twitter.com/zoltanszogyenyi>",
+		"Robert Tanislav <https://twitter.com/roberttanislav>",
+		"Julian Cataldo <https://twitter.com/Julian_Cataldo>"
+	],
+  "type": "module",
+  "version": "0.0.1",
+  "main": "app.js",
+  "scripts": {
+    "aaStart": "npm install && astro build && node --watch --import ./instrumentation.js app.js",
+    "aaWatch": "npm install && astro build && nodemon --import ./instrumentation.js app.js",
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "build2": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "./src/"
+    ],
+    "ignore": [
+      "./.vscode/**",
+      "./dist/**",
+      "./node_modules/**",
+      "./src/env.d.ts"
+    ],
+    "ext": "astro,js,json,mjs,ts,tsx,md,mdx",
+    "events": {
+      "restart": "astro build"
+    }
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.8.1",
+    "@astrojs/node": "^8.3.2",
+    "@astrojs/sitemap": "^3.1.6",
+    "@astrojs/tailwind": "^5.1.0",
+    "@faker-js/faker": "^8.4.1",
+    "@godaddy/terminus": "^4.12.1",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.48.0",
+    "@opentelemetry/exporter-logs-otlp-grpc": "^0.52.1",
+    "@opentelemetry/exporter-metrics-otlp-grpc": "^0.52.1",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.52.1",
+    "@opentelemetry/sdk-logs": "^0.52.1",
+    "@opentelemetry/sdk-metrics": "^1.25.1",
+    "@opentelemetry/sdk-node": "^0.52.1",
+    "@opentelemetry/sdk-trace-node": "^1.25.1",
+    "apexcharts": "^3.50.0",
+    "astro": "^4.11.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "flowbite": "^2.4.1",
+    "flowbite-typography": "^1.0.3",
+    "shiki": "^1.10.3",
+    "tailwind-scrollbar": "^3.1.0",
+    "tailwindcss": "^3.4.5"
+  },
+  "devDependencies": {
+    "@types/cssesc": "^3.0.2",
+    "@types/express": "^4.17.21",
+    "@types/html-escaper": "^3.0.2",
+    "@types/node": "^20.14.10",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  }
+}
