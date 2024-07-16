@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FlowBiteAdmin.API\FlowBiteAdmin.API.csproj" />
+    <ProjectReference Include="..\FlowBiteAdmin.RazorUI\FlowBiteAdmin.RazorUI.csproj" />
   </ItemGroup>
 
 </Project>
+

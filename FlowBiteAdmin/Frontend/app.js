@@ -1,4 +1,4 @@
-// import express, { Express, Request, Response } from "express";
+//import express, { Express, Request, Response } from "express";
 import express from "express";
 import dotenv from "dotenv";
 
@@ -56,7 +56,7 @@ createTerminus(server, {
     signal: 'SIGINT',
     healthChecks: {
         '/health': healthCheck,
-        //'/alive': () => { }
+        '/alive': () => { }
     },
     onSignal: async () => {
         console.log('server is starting cleanup');

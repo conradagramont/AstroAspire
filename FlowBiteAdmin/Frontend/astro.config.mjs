@@ -6,8 +6,9 @@ import tailwind from '@astrojs/tailwind';
 import node from "@astrojs/node";
 
 // This was hard coded in the FlowBite example. Let's get rid of this as soon as we can.
-const DEV_PORT = 4321;
+//const DEV_PORT = 4321;
 
+const DEV_PORT = process.env.PORT || 4321;
 // https://astro.build/config
 export default defineConfig({
   
