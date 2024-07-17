@@ -11,12 +11,14 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="8.0.1" />
+    <PackageReference Include="Aspire.Hosting.MongoDB" Version="8.0.2" />
     <PackageReference Include="Aspire.Hosting.NodeJs" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FlowBiteAdmin.API\FlowBiteAdmin.API.csproj" />
     <ProjectReference Include="..\FlowBiteAdmin.RazorUI\FlowBiteAdmin.RazorUI.csproj" />
+    <ProjectReference Include="..\FlowBiteAdmin.DBManager\FlowBiteAdmin.DBManager.csproj" />
   </ItemGroup>
 
 </Project>

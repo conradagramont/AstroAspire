@@ -1,13 +1,15 @@
 using OpenTelemetry.Trace;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-// Add services to the container.
+// Add services to the container from the Aspire ServiceDefaults
 builder.AddServiceDefaults();
-
-// Add services to the container.
 builder.Services.AddProblemDetails();
+
+// add services to the container from the Aspire AppHost
+builder.AddMongoDBClient("mongodb");
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

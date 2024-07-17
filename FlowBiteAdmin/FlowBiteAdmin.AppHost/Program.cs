@@ -1,8 +1,13 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-//var api = builder.AddProject<Projects.FlowBiteAdmin_API>("api")
- //   .WithExternalHttpEndpoints;
+// We're going to use an Aspire to add the MongoDB client
+var mongo = builder.AddMongoDB("mongo")
+    .WithMongoExpress()
+    .AddDatabase("mongodb", "FlowBiteAdmin");
+
+// Add the API project to the builder
  var api = builder.AddProject<Projects.FlowBiteAdmin_API>("api")
+    .WithReference(mongo)
     .WithExternalHttpEndpoints();
     //.WithHttpEndpoint(env: "PORT");
 
@@ -25,7 +30,11 @@ var frontend = builder.AddNpmApp("frontend", "../Frontend", "aaStart")
     .PublishAsDockerFile();
 
 var adminUI = builder.AddProject<Projects.FlowBiteAdmin_RazorUI>("adminUI")
+    .WithReference(mongo)
     .WithExternalHttpEndpoints();
+
+var dbManager = builder.AddProject<Projects.FlowBiteAdmin_DBManager>("dbManager")
+    .WithReference(mongo);
 
 // This is needed in development as we don't have a valid certificate for the frontend to call the AstroAspire.API without failing
 if (builder.Environment.EnvironmentName == "Development" && builder.Configuration["DOTNET_LAUNCH_PROFILE"] == "https")
