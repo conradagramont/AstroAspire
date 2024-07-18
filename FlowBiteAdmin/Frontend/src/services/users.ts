@@ -1,4 +1,6 @@
 /* eslint-disable no-param-reassign */
+
+/*
 import { faker } from '@faker-js/faker';
 import { RANDOMIZE } from '../app/constants.js';
 import type { Users } from '../types/entities.js';
@@ -22,3 +24,4 @@ export function getUsers(randomize = RANDOMIZE) {
 
 	return result;
 }
+*/

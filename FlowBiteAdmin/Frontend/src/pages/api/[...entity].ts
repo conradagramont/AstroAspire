@@ -1,8 +1,5 @@
 import type { APIRoute } from 'astro';
 import * as operations from '../../services/index.js';
-// import type * as operations from '../../services/index';
-// export * from '../../services/products.js';
-// export * from '../../services/users.js';
 
 /* Map REST API endpoints to internal operations
   (GETs only for illustration purpose) */
@@ -19,7 +16,7 @@ function parseTypeParam(endpoint: string | undefined) {
 /* NEW */
 
 export async function GET ({params, request}: {params: {entity?: string}, request: Request}): Promise<Response> {
-	console.log('Hit!', params.entity);
+	console.log('API Hit!', params.entity);
 	// console.log('entity', params.entity?.toString());
 	// console.log('params: ', params);
 
@@ -27,7 +24,9 @@ export async function GET ({params, request}: {params: {entity?: string}, reques
 
 	if (!operationName) return new Response('404', { status: 404 });
 
-	const body = endpointsToOperations[operationName]();
+	const body = await endpointsToOperations[operationName]();
+
+	console.log('GET body');
 
 	return new Response(JSON.stringify(body), {
 		status: 200,

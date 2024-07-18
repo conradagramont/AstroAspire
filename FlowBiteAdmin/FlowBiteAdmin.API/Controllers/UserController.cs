@@ -17,28 +17,38 @@ public class UserController : ControllerBase
         _mongoClient = mongoClient;
     }
 
-    [HttpGet(Name = "GetUsers")]
+    [HttpGet]
     public IEnumerable<User> Get()
     {
-        var users = Enumerable.Range(1, 5).Select(index => new User
-        {
-            id = index,
-            name = "John Doe",
-            email = "j.d@fake.com",
-            avatar = "https://via.placeholder.com/150",
-            biography = "This is a biography",
-            position = "Developer",
-            country = "USA",
-            status = "Active"            
-        })
-        .ToArray();
-
         var database = _mongoClient.GetDatabase("FlowBiteAdmin");
         var collection = database.GetCollection<User>("Users");
-        collection.InsertManyAsync(users);
+        
+        var users = collection.Find(FilterDefinition<User>.Empty).Limit(10).ToList();
+
         return users;
 
     }
+    [HttpGet("{id}")]
+    public User GetUser(string id)
+    {
+        //convert id to int
+        int idInt = Int32.Parse(id);
+
+        var database = _mongoClient.GetDatabase("FlowBiteAdmin");
+        var collection = database.GetCollection<User>("Users");
+
+        // Search for user based on the passed in userID and return if found
+        var builder = Builders<User>.Filter;
+        var idFilter = builder.Eq(u => u.id, idInt);
+        var cursor = collection.Find(idFilter);
+        var user = cursor.FirstOrDefault();
+        if (user == null) {
+            return null;
+        }
+        return user;
+
+    }
+
     [HttpPost(Name = "AddUser")]
     public User AddUser(User user)
     {

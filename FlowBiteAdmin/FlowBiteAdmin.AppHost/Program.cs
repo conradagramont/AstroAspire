@@ -2,7 +2,11 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 // We're going to use an Aspire to add the MongoDB client
 var mongo = builder.AddMongoDB("mongo")
+    // We're going to use a data volume to store the MongoDB data
+    //.WithDataVolume("mongo-data")
+    // We're going to use the MongoDB Express to manage the database
     .WithMongoExpress()
+    // We're going to use the FlowBiteAdmin database
     .AddDatabase("mongodb", "FlowBiteAdmin");
 
 // Add the API project to the builder
@@ -17,7 +21,7 @@ var mongo = builder.AddMongoDB("mongo")
 // 2. The path to the frontend project: "../AstroFrontend"
 // 3. The name of the npm script to run (defined in ../AstroFrontend/package.json): "aspirerun"
 
-var frontend = builder.AddNpmApp("frontend", "../Frontend", "aaStart")
+var frontend = builder.AddNpmApp("frontend", "../Frontend", "aaWatch")
     .WithReference(api)
     // Parameter is defined in the appsettings.json file
     // Since the API path could change in the API project, we'll pass it as a parameter to the frontend project

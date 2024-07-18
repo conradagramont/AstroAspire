@@ -6,7 +6,7 @@ namespace FlowBiteAdmin.DBManager;
 
 internal class DBInitializer(IMongoClient mongoClient, ILogger<DBInitializer> logger) : BackgroundService
 {
-    public const string ActivitySourceName = "Migrations";
+    public const string ActivitySourceName = "Seeding";
     private readonly IMongoClient _mongoClient = mongoClient;
 
     private readonly ActivitySource _activitySource = new(ActivitySourceName);
@@ -15,6 +15,7 @@ internal class DBInitializer(IMongoClient mongoClient, ILogger<DBInitializer> lo
     {
 
         await InitializeDatabaseAsync(cancellationToken);
+
     }
 
     private async Task InitializeDatabaseAsync(CancellationToken cancellationToken)
@@ -30,27 +31,42 @@ internal class DBInitializer(IMongoClient mongoClient, ILogger<DBInitializer> lo
 
     private async Task SeedAsync(CancellationToken cancellationToken)
     {
-        logger.LogInformation("Seeding database");
-
-        var users = Enumerable.Range(1, 5).Select(index => new User
-        {
-            id = index,
-            name = "John Doe",
-            email = "j.d@fake.com",
-            avatar = "https://via.placeholder.com/150",
-            biography = "This is a biography",
-            position = "Developer",
-            country = "USA",
-            status = "Active"
-        })
-        .ToArray();
-
-
-        var sw = Stopwatch.StartNew();
-
         var database = _mongoClient.GetDatabase("FlowBiteAdmin");
         var collection = database.GetCollection<User>("Users");
 
-        await collection.InsertManyAsync(users);
+        if (await collection.CountDocumentsAsync(FilterDefinition<User>.Empty) > 0)
+        {
+            logger.LogInformation("Database already seeded");
+            return;
+        }
+        else
+        {
+            logger.LogInformation("Seeding database");
+
+            int batchSize = 1000;
+            int batchCount = 50000 / batchSize;
+            int remaining = 50000 % batchSize;
+
+            // Loop through the batches and insert them into the database
+            for (int i = 1; i < batchCount; i++)
+            {
+                logger.LogInformation("Inserting batch {BatchIndex} of {BatchCount}", i + 1, batchCount);
+                var users = Enumerable.Range(i * batchSize, batchSize).Select(index => new User
+                {
+                    id = index,
+                    name = "John Doe",
+                    email = "j.d@fake.com",
+                    avatar = "https://via.placeholder.com/150",
+                    biography = "This is a biography",
+                    position = "Developer",
+                    country = "USA",
+                    status = "Active"
+                })
+                    .ToArray();
+
+                await collection.InsertManyAsync(users);
+            }
+            var sw = Stopwatch.StartNew();
+        }
     }
 }
